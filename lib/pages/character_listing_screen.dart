@@ -61,6 +61,7 @@ class _CharacterListingScreenState extends State<CharacterListingScreen> {
               ),
               Expanded(
                 child: PageView(
+                  physics: ClampingScrollPhysics(),
                   controller: _pageController,
                   children: children,
                 ),
