@@ -1,6 +1,7 @@
 import 'package:flutter_app/styleguide.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/widgets/character_widget.dart';
+import 'package:flutter_app/models/character.dart';
 
 class CharacterListingScreen extends StatefulWidget {
   @override
@@ -9,9 +10,27 @@ class CharacterListingScreen extends StatefulWidget {
 
 class _CharacterListingScreenState extends State<CharacterListingScreen> {
 
+  PageController _pageController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _pageController = PageController(
+      viewportFraction: 1.0,
+      initialPage: 0 ,
+      keepPage: false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final children = <Widget>[];
+    for (var i = 0; i < characters.length; i++){
+      children.add(new CharacterWidget(character: characters[i]));
+       }
+
 
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +60,10 @@ class _CharacterListingScreenState extends State<CharacterListingScreen> {
                   )
               ),
               Expanded(
-                child: CharacterWidget(),
+                child: PageView(
+                  controller: _pageController,
+                  children: children,
+                ),
               )
             ],
       ),
@@ -50,3 +72,26 @@ class _CharacterListingScreenState extends State<CharacterListingScreen> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
