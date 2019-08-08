@@ -28,7 +28,7 @@ class _CharacterListingScreenState extends State<CharacterListingScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     final children = <Widget>[];
     for (var i = 0; i < characters.length; i++){
-      children.add(new CharacterWidget(character: characters[i]));
+      children.add(new CharacterWidget(character: characters[i], pageController: _pageController, currentPage: i));
        }
 
 

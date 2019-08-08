@@ -6,8 +6,10 @@ import 'package:flutter_app/pages/character_detail_screen.dart';
 class CharacterWidget extends StatelessWidget {
 
   final Character character;
+  final PageController pageController;
+  final int currentPage;
 
-  const CharacterWidget({Key key, this.character}) : super(key: key);
+  const CharacterWidget({Key key, this.character, this.pageController, this.currentPage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,60 +22,71 @@ class CharacterWidget extends StatelessWidget {
               transitionDuration: const Duration(microseconds: 350),
               pageBuilder: (context, _, __) => CharacterDetailScreen(character: character)));
         },
-        child:Stack(
-      children:[
-        Align(
-          alignment: Alignment.bottomCenter,
-            child: ClipPath(
-              clipper: CharacterCardBackgroundClipper(),
-            child: Hero(
-              tag: "background-${character.name}",
-              child: Container(
-                height: 0.6 * screenHeight,
-                width: 0.9 * screenWidth,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: character.colors,
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                  )
-                ),
-              ),
-            ),
-            ),
-        ),
-        Align(
-          alignment: Alignment(0, -0.5),
-          child: Hero(
-            tag: "image-${character.name}",
-            child: Image.asset(
-        character.imagePath,
-        height: screenHeight * 0.45,
-                width: screenWidth * 0.75,
+        child:AnimatedBuilder(
+          animation: pageController,
+          builder: (context, child) {
+            double value = 1;
+            if (pageController.position.haveDimensions) {
+              value = pageController.page - currentPage;
+              value = (1 - (value.abs() * 0.6)).clamp(0.0, 1.0);
 
+            }
+            return  Stack(
+              children:[
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ClipPath(
+                    clipper: CharacterCardBackgroundClipper(),
+                    child: Hero(
+                      tag: "background-${character.name}",
+                      child: Container(
+                        height: 0.6 * screenHeight,
+                        width: 0.9 * screenWidth,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: character.colors,
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                            )
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment(0, -0.5),
+                  child: Hero(
+                    tag: "image-${character.name}",
+                    child: Image.asset(
+                      character.imagePath,
+                      height: screenHeight * 0.45 * value,
+                      width: screenWidth * 0.75,
+
+                    ),
+                  ),
+                ),
+                Padding(
+                    padding: EdgeInsets.only(left:48, right:16, bottom:16),
+                    child:
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Hero(
+                          tag: "name-${character.name}",
+                          child: Material(
+                              color: Colors.transparent,
+                              child: Container(
+                                  child: Text(character.name, style: AppTheme.heading))),
+                        ),
+                        Text("Tap to read more", style: AppTheme.subHeading,),
+                      ],
+                    )
+                ),
+              ],
+            );
+            },
         ),
-          ),
-        ),
-        Padding(
-        padding: EdgeInsets.only(left:48, right:16, bottom:16),
-        child:
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Hero(
-              tag: "name-${character.name}",
-              child: Material(
-                color: Colors.transparent,
-                  child: Container(
-                      child: Text(character.name, style: AppTheme.heading))),
-            ),
-            Text("Tap to read more", style: AppTheme.subHeading,),
-          ],
-        )
-        ),
-      ],
-    ),
     );
   }
 }
